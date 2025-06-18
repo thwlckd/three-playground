@@ -1,6 +1,7 @@
 import useGesture from './useGesture';
+import useScreenSize from '@/hooks/useScreenSize';
 import { useTexture } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { RefObject, useRef } from 'react';
 import { DoubleSide, Mesh } from 'three';
 
@@ -27,21 +28,21 @@ interface CardProps {
 const Card = ({ index, offsetRef, textureSrc }: CardProps) => {
   const meshRef = useRef<Mesh>(null);
   const texture = useTexture(textureSrc);
-  const isMobile = useThree().viewport.width < 5;
-  const width = isMobile ? 1 : 2;
-  const height = isMobile ? 2 : 3;
-  const spacing = isMobile ? 1 : 1.5;
-  const totalLength = spacing * NUM_CARDS;
+  const isNonDesktop = useScreenSize() !== 'desktop';
+  const width = isNonDesktop ? 1 : 2;
+  const height = isNonDesktop ? 2 : 3;
+  const gap = isNonDesktop ? 0.8 : 1.3;
+  const totalLength = gap * NUM_CARDS;
 
   useFrame(() => {
     if (!meshRef.current) {
       return;
     }
 
-    const offset = (index * spacing + offsetRef.current) % totalLength;
+    const offset = (index * gap + offsetRef.current) % totalLength;
     const positiveOffset = (offset + totalLength) % totalLength;
-    const x = positiveOffset * 0.5;
-    const y = positiveOffset * 0.5;
+    const x = positiveOffset * (isNonDesktop ? 0.4 : 0.5);
+    const y = positiveOffset * (isNonDesktop ? 0.6 : 0.5);
     const z = -positiveOffset;
 
     meshRef.current.position.set(x, y, z);

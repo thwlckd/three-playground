@@ -1,4 +1,4 @@
-import ThreeWorld from './Three';
+import ThreeWorld from '@/features/Three';
 
 const Hero = () => {
   return <ThreeWorld />;
