@@ -2,6 +2,7 @@ import useGesture from './useGesture';
 import useScreenSize from '@/hooks/useScreenSize';
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { useRouter } from 'next/navigation';
 import { RefObject, useRef, useState } from 'react';
 import { Mesh, Vector3 } from 'three';
 
@@ -34,8 +35,10 @@ interface CardProps {
 }
 
 const Card = ({ order, offsetRef, textureSrc, hoveredCardRef }: CardProps) => {
+  const router = useRouter();
   const cardRef = useRef<Mesh>(null);
   const fakeRef = useRef<Mesh>(null);
+  const clickDurationRef = useRef(0);
   const texture = useTexture(textureSrc);
   const [hovered, setHovered] = useState(false);
   const isNonDesktop = useScreenSize() !== 'desktop';
@@ -73,11 +76,28 @@ const Card = ({ order, offsetRef, textureSrc, hoveredCardRef }: CardProps) => {
         ref={fakeRef}
         onPointerOver={(e) => {
           e.stopPropagation();
+
           hoveredCardRef.current = order;
+          document.body.style.cursor = 'pointer';
         }}
         onPointerOut={(e) => {
           e.stopPropagation();
+
           hoveredCardRef.current = null;
+          document.body.style.cursor = 'grab';
+        }}
+        onPointerDown={(e) => {
+          e.stopPropagation();
+
+          document.body.style.cursor = 'pointer';
+          clickDurationRef.current = performance.now();
+        }}
+        onPointerUp={() => {
+          const clickDuration = performance.now() - clickDurationRef.current;
+
+          if (clickDuration < 300) {
+            router.push('/project/1');
+          }
         }}
       >
         <boxGeometry args={[(size.width * 5) / 3, size.height, 0.05]} />

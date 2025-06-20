@@ -98,6 +98,8 @@ const useGesture = () => {
       }
 
       return () => {
+        document.body.style.cursor = 'auto';
+
         if (isTouchScreen) {
           window.removeEventListener('touchstart', handleTouchStart);
           window.removeEventListener('touchmove', handleTouchMove);
