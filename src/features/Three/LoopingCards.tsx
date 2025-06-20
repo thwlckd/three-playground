@@ -1,7 +1,9 @@
 import useGesture from './useGesture';
+import useSmoothZoom from './useZoom';
 import useScreenSize from '@/hooks/useScreenSize';
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { delay } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import { RefObject, useRef, useState } from 'react';
 import { Mesh, Vector3 } from 'three';
@@ -45,8 +47,8 @@ const Card = ({ order, offsetRef, textureSrc, hoveredCardRef }: CardProps) => {
   const size = isNonDesktop ? { width: 1, height: 2 } : { width: 2, height: 4 };
   const gap = isNonDesktop ? 0.8 : 1.3;
   const listDepth = gap * NUM_CARDS;
-
-  const positionTarget = new Vector3(); // outside to avoid GC
+  const vector = new Vector3();
+  const { setZoom } = useSmoothZoom();
 
   useFrame(function moveCardPosition() {
     if (!cardRef.current || !fakeRef.current) return;
@@ -62,7 +64,7 @@ const Card = ({ order, offsetRef, textureSrc, hoveredCardRef }: CardProps) => {
     fakeRef.current.position.set(pos.x, pos.y, pos.z);
 
     if (hovered) {
-      cardRef.current.position.lerp(positionTarget.set(pos.x + size.width / 3, pos.y, pos.z), 0.3);
+      cardRef.current.position.lerp(vector.set(pos.x + size.width / 3, pos.y, pos.z), 0.3);
     } else {
       cardRef.current.position.set(pos.x, pos.y, pos.z);
     }
@@ -92,10 +94,12 @@ const Card = ({ order, offsetRef, textureSrc, hoveredCardRef }: CardProps) => {
           document.body.style.cursor = 'pointer';
           clickDurationRef.current = performance.now();
         }}
-        onPointerUp={() => {
+        onPointerUp={async () => {
           const clickDuration = performance.now() - clickDurationRef.current;
 
           if (clickDuration < 300) {
+            setZoom(2);
+            await delay(500);
             router.push('/project/1');
           }
         }}

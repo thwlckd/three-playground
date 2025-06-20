@@ -1,6 +1,6 @@
 import useMatchMedia from '@/hooks/useMatchMedia';
 import { useThree } from '@react-three/fiber';
-import { useMotionValue, useMotionValueEvent, useSpring } from 'motion/react';
+import { animate, useMotionValue, useMotionValueEvent, useSpring } from 'motion/react';
 import { useRef, useEffect } from 'react';
 import { PerspectiveCamera } from 'three';
 
@@ -113,6 +113,14 @@ const useGesture = () => {
       };
     },
     [fovMotion, isTouchScreen, motionOffset],
+  );
+
+  useEffect(
+    function animateShuffle() {
+      // animate(motionOffset, -20, { type: 'spring' });
+      animate(motionOffset, -20, { type: 'spring', damping: 40, stiffness: 80 });
+    },
+    [motionOffset],
   );
 
   return { offsetRef };
