@@ -11,11 +11,9 @@ const useGesture = () => {
   const offsetRef = useRef(0);
   const motionOffset = useMotionValue(0);
   const smoothOffset = useSpring(motionOffset, { mass: 1, damping: 40, stiffness: 400 });
-
   const { camera } = useThree();
   const fovMotion = useMotionValue(FOV.default);
   const fovSpring = useSpring(fovMotion, { mass: 1, damping: 30, stiffness: 300 });
-
   const isTouchScreen = useMatchMedia('(pointer: coarse)');
 
   useMotionValueEvent(smoothOffset, 'change', (latestOffset) => {
