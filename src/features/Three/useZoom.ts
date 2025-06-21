@@ -10,8 +10,9 @@ const useSmoothZoom = () => {
   const zoomMotion = useMotionValue(camera.zoom);
   const zoomSpring = useSpring(zoomMotion, {
     mass: 1,
-    stiffness: 120,
-    damping: 30,
+    stiffness: 80,
+    damping: 20,
+    velocity: 0.5,
   });
 
   useMotionValueEvent(zoomSpring, 'change', (latest) => {

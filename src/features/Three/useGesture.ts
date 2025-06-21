@@ -117,8 +117,7 @@ const useGesture = () => {
 
   useEffect(
     function animateShuffle() {
-      // animate(motionOffset, -20, { type: 'spring' });
-      animate(motionOffset, -20, { type: 'spring', damping: 40, stiffness: 80 });
+      animate(motionOffset, -15, { type: 'tween', ease: 'easeOut', duration: 1 });
     },
     [motionOffset],
   );
