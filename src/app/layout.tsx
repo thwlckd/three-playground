@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
+import { unstable_ViewTransition as ViewTransition } from 'react';
 
 const moneygraphyFont = localFont({
   src: '../assets/Moneygraphy-Pixel.woff2',
@@ -21,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${moneygraphyFont.className} h-full min-h-screen w-full max-w-screen antialiased`}>
-        {children}
+        <ViewTransition>{children}</ViewTransition>
       </body>
     </html>
   );

@@ -1,11 +1,11 @@
 import useGesture from './useGesture';
-import useSmoothZoom from './useZoom';
+import useZoom from './useZoom';
 import useScreenSize from '@/hooks/useScreenSize';
 import { useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import { delay } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
-import { RefObject, useRef, useState } from 'react';
+import { RefObject, startTransition, useRef, useState } from 'react';
 import { Mesh, Vector3 } from 'three';
 
 const NUM_CARDS = 20;
@@ -48,7 +48,7 @@ const Card = ({ order, offsetRef, textureSrc, hoveredCardRef }: CardProps) => {
   const gap = isNonDesktop ? 0.8 : 1.3;
   const listDepth = gap * NUM_CARDS;
   const vector = new Vector3();
-  const { setZoom } = useSmoothZoom();
+  const { setZoom } = useZoom();
 
   useFrame(function moveCardPosition() {
     if (!cardRef.current || !fakeRef.current) return;
@@ -100,7 +100,9 @@ const Card = ({ order, offsetRef, textureSrc, hoveredCardRef }: CardProps) => {
           if (clickDuration < 300) {
             setZoom(2);
             await delay(500);
-            router.push('/project/1');
+            startTransition(() => {
+              router.push('/project/1');
+            });
           }
         }}
       >

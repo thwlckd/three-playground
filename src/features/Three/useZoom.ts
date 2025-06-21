@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 const DEFAULT_ZOOM = 1;
 
-const useSmoothZoom = () => {
+const useZoom = () => {
   const { camera } = useThree();
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const zoomMotion = useMotionValue(camera.zoom);
@@ -21,6 +21,10 @@ const useSmoothZoom = () => {
   });
 
   useEffect(() => {
+    if (zoom === DEFAULT_ZOOM) {
+      return;
+    }
+
     zoomMotion.set(zoom);
 
     return () => {
@@ -31,4 +35,4 @@ const useSmoothZoom = () => {
   return { setZoom };
 };
 
-export default useSmoothZoom;
+export default useZoom;
