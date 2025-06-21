@@ -44,7 +44,7 @@ const Card = ({ order, offsetRef, textureSrc, hoveredCardRef }: CardProps) => {
   const texture = useTexture(textureSrc);
   const [hovered, setHovered] = useState(false);
   const isNonDesktop = useScreenSize() !== 'desktop';
-  const size = isNonDesktop ? { width: 1, height: 2 } : { width: 2, height: 4 };
+  const size = isNonDesktop ? { width: 1, height: 1 } : { width: 2, height: 2 };
   const gap = isNonDesktop ? 0.8 : 1.3;
   const listDepth = gap * NUM_CARDS;
   const vector = new Vector3();

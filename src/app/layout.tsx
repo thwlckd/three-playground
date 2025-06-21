@@ -14,11 +14,7 @@ export const metadata: Metadata = {
   description: 'three portfolio',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="ko">
       <body className={`${moneygraphyFont.className} h-full min-h-screen w-full max-w-screen antialiased`}>
@@ -26,4 +22,6 @@ export default function RootLayout({
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
