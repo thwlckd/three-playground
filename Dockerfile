@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/ .yarn/
 COPY .pnp.cjs .pnp.cjs
-# COPY .pnp.loader.mjs .pnp.loader.mjs
+COPY .pnp.loader.mjs .pnp.loader.mjs
 
 # =====================================================================================
 
