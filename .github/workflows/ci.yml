@@ -45,5 +45,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ssr-server/portfolio:latest
-            ssr-server/portfolio:${{ steps.get-version.outputs.version }}
+            ssr-server:latest
+            ssr-server:${{ steps.get-version.outputs.version }}
