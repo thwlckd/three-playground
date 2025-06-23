@@ -17,11 +17,23 @@ export const metadata: Metadata = {
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="ko">
-      <body className={`${moneygraphyFont.className} h-full min-h-screen w-full max-w-screen antialiased`}>
-        <ViewTransition>{children}</ViewTransition>
+      <body className={`${moneygraphyFont.className} relative h-full min-h-screen w-full max-w-screen antialiased`}>
+        <ViewTransition>
+          <Navigation />
+          {children}
+          <Footer />
+        </ViewTransition>
       </body>
     </html>
   );
 };
 
 export default RootLayout;
+
+const Navigation = () => {
+  return <nav className="fixed top-0 left-0 z-50 p-1">nav</nav>;
+};
+
+const Footer = () => {
+  return <footer className="fixed right-0 bottom-0 z-50 p-1">footer</footer>;
+};
