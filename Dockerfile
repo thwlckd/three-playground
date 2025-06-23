@@ -33,6 +33,7 @@ COPY . .
 
 # Build Next.js app (telemetry optional)
 # ENV NEXT_TELEMETRY_DISABLED=1
+RUN yarn install --immutable
 RUN yarn build
 
 # =====================================================================================
