@@ -68,8 +68,9 @@ COPY --from=builder /app/.yarnrc.yml ./
 COPY --from=builder /app/.yarn /app/.yarn
 
 # Fix permissions
-RUN chown -R nextjs:nodejs /app
-
+RUN chmod -R 755 .yarn && \
+    chown -R nextjs:nodejs /app
+    
 USER nextjs
 
 EXPOSE 3000
