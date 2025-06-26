@@ -81,7 +81,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           script: |
-            cd ~/your-app-folder
+            cd /home/ubuntu/portfolio.v2
             git pull origin release
             docker compose pull
             docker compose down
