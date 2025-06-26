@@ -65,6 +65,9 @@ COPY --from=builder /app/yarn.lock ./
 COPY --from=builder /app/.yarnrc.yml ./
 COPY --from=builder /app/.yarn /app/.yarn
 
+# Fix permissions so nextjs user can access all files
+RUN chown -R nextjs:nodejs /app
+
 # PnP loader requires NODE_OPTIONS
 ENV NODE_OPTIONS="--require ./.pnp.cjs"
 

@@ -6,8 +6,9 @@ on:
       - release
 
 jobs:
-  ci:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +39,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -47,3 +48,15 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/ssr-server:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/ssr-server:${{ steps.get-version.outputs.version }}
+
+      - name: Deploy to EC2 via SSH and Docker Compose
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/next-app
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d
