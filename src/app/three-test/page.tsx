@@ -1,55 +1,92 @@
 'use client';
 
-import { OrbitControls, RoundedBox, useTexture } from '@react-three/drei';
-import { Canvas, useFrame } from '@react-three/fiber';
-import React, { useRef } from 'react';
+import useScreenSize from '@/hooks/useScreenSize';
+import { OrbitControls, RoundedBox, Text3D } from '@react-three/drei';
+import { Canvas, ThreeEvent, useFrame } from '@react-three/fiber';
+import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
 
-// Face 컴포넌트: 각 면에 Plane과 텍스처 및 이벤트 부착
-function Face({
-  texture,
+function Face3D({
+  text,
   position,
   rotation,
   onClick,
-  onPointerOver,
-  onPointerOut,
 }: {
-  texture: THREE.Texture;
+  text: string;
   position: [number, number, number];
   rotation: [number, number, number];
-  onClick: () => void;
-  onPointerOver?: () => void;
-  onPointerOut?: () => void;
+  onClick: (e: ThreeEvent<MouseEvent>) => void;
 }) {
+  const textRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
+  const targetScale = hovered ? 1.2 : 1.0;
+  const color = hovered ? '#e63946' : '#333';
+
+  // 부드러운 인터렉션
+  useFrame(() => {
+    if (textRef.current) {
+      const current = textRef.current.scale.x;
+      const next = THREE.MathUtils.lerp(current, targetScale, 0.1);
+      textRef.current.scale.set(next, next, next);
+
+      const targetY = hovered ? 0.2 : 0;
+      textRef.current.position.y = THREE.MathUtils.lerp(textRef.current.position.y, targetY, 0.1);
+    }
+  });
+
   return (
-    <mesh
-      scale={0.8}
-      position={position}
-      rotation={rotation}
-      onClick={onClick}
-      onPointerOver={onPointerOver}
-      onPointerOut={onPointerOut}
-    >
-      <planeGeometry args={[1, 1]} />
-      <meshBasicMaterial map={texture} toneMapped={false} transparent />
-    </mesh>
+    <group position={position} rotation={rotation}>
+      {/* ✅ 투명 클릭 레이어 */}
+      <mesh
+        onClick={onClick}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          setHovered(true);
+        }}
+        onPointerOut={(e) => {
+          e.stopPropagation();
+          setHovered(false);
+        }}
+      >
+        <planeGeometry args={[1, 1]} />
+        <meshBasicMaterial transparent opacity={0} />
+      </mesh>
+      <Text3D
+        ref={(el) => {
+          textRef.current = el;
+          el?.geometry.center();
+        }}
+        font="/fonts/MoneygraphyTTF_Regular.json"
+        size={0.25}
+        height={0.05}
+        curveSegments={8}
+        bevelEnabled
+        bevelThickness={0.01}
+        bevelSize={0.01}
+        bevelSegments={3}
+        // position={position}
+        // rotation={rotation}
+        //   onClick={onClick}
+        // onPointerOver={(e) => {
+        //   e.stopPropagation();
+        //   setHovered(true);
+        // }}
+        // onPointerOut={(e) => {
+        //   e.stopPropagation();
+        //   setHovered(false);
+        // }}
+      >
+        {text}
+        <meshStandardMaterial color={color} />
+      </Text3D>
+    </group>
   );
 }
 
-// 메인 구성
 function InteractiveBox() {
-  const [front, back, top, bottom, left, right] = useTexture([
-    '/texture1.png',
-    '/texture2.png',
-    '/texture3.png',
-    '/texture4.png',
-    '/texture5.png',
-    '/texture6.png',
-  ]);
-
   const boxRef = useRef<THREE.Mesh>(null!);
+  const isMobile = useScreenSize() === 'mobile';
 
-  // 살짝 회전 애니메이션
   useFrame(() => {
     if (boxRef.current) {
       boxRef.current.rotation.y += 0.003;
@@ -57,33 +94,66 @@ function InteractiveBox() {
   });
 
   return (
-    <group ref={boxRef}>
-      {/* ✅ 둥근 모서리 RoundedBox 본체 */}
+    <group ref={boxRef} scale={isMobile ? 1 : 1.5}>
+      {/* 둥근 박스 */}
       <RoundedBox args={[1, 1, 1]} radius={0.1} smoothness={4}>
-        <meshStandardMaterial color="white" />
+        <meshStandardMaterial color="#f0f0f0" />
       </RoundedBox>
 
-      {/* ✅ 6면 Plane은 살짝 float (z-fighting 방지) */}
-      <Face texture={front} position={[0, 0, 0.501]} rotation={[0, 0, 0]} onClick={() => console.log('Front')} />
-      <Face texture={back} position={[0, 0, -0.501]} rotation={[0, Math.PI, 0]} onClick={() => console.log('Back')} />
-      <Face texture={top} position={[0, 0.501, 0]} rotation={[-Math.PI / 2, 0, 0]} onClick={() => console.log('Top')} />
-      <Face
-        texture={bottom}
-        position={[0, -0.501, 0]}
+      {/* 각 면에 텍스트 */}
+      <Face3D
+        text="Front"
+        position={[0, 0, 0.5]}
+        rotation={[0, 0, 0]}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('Front');
+        }}
+      />
+      <Face3D
+        text="Back"
+        position={[0, 0, -0.5]}
+        rotation={[0, Math.PI, 0]}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('Back');
+        }}
+      />
+      <Face3D
+        text="Top"
+        position={[0, 0.5, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('Top');
+        }}
+      />
+      <Face3D
+        text="Bottom"
+        position={[0, -0.5, 0]}
         rotation={[Math.PI / 2, 0, 0]}
-        onClick={() => console.log('Bottom')}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('Bottom');
+        }}
       />
-      <Face
-        texture={left}
-        position={[-0.501, 0, 0]}
+      <Face3D
+        text="Left"
+        position={[-0.5, 0, 0]}
         rotation={[0, -Math.PI / 2, 0]}
-        onClick={() => console.log('Left')}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('Left');
+        }}
       />
-      <Face
-        texture={right}
-        position={[0.501, 0, 0]}
+      <Face3D
+        text="Right"
+        position={[0.5, 0, 0]}
         rotation={[0, Math.PI / 2, 0]}
-        onClick={() => console.log('Right')}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('Right');
+        }}
       />
     </group>
   );
