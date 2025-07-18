@@ -1,6 +1,8 @@
 'use client';
 
-import Image from 'next/image';
+import Pixelation from '@/components/Pixelation';
+
+// import Image from 'next/image';
 
 const imageUrls = [
   'https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg.webp',
@@ -31,7 +33,8 @@ const ProjectDetailPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2">
         {imageUrls.map((url, i) => (
           <div key={i} className="relative aspect-square w-full overflow-hidden">
-            <Image src={url} alt={`image-${i}`} fill objectFit="cover" />
+            <Pixelation src={url} />
+            {/* <Image src={url} alt={`image-${i}`} fill objectFit="cover" /> */}
           </div>
         ))}
       </div>
